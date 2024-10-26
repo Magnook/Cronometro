@@ -1,114 +1,106 @@
-let cronometroTempo = 0;
-let cronometroInterval;
-let cronometroAtivo = false;
-
+let tempo = 0;
+let intervalo;
 let temporizadorTempo = 0;
 let temporizadorInterval;
-let temporizadorAtivo = false;
+let cronometroRodando = false;
 
-// Funções do Cronômetro
-document.getElementById('play-pause').addEventListener('click', () => {
-    if (!cronometroAtivo) {
-        iniciarCronometro();
-    } else {
-        pausarCronometro();
-    }
-});
-document.getElementById('reset').addEventListener('click', reiniciarCronometro);
+// Cronômetro
+document.getElementById('iniciar').addEventListener('click', iniciarCronometro);
+document.getElementById('pausar').addEventListener('click', pausarCronometro);
+document.getElementById('reiniciar').addEventListener('click', reiniciarCronometro);
 
 function iniciarCronometro() {
-    cronometroInterval = setInterval(() => {
-        cronometroTempo++;
-        document.getElementById('tempo').innerText = formatarTempo(cronometroTempo);
-    }, 1000);
-    cronometroAtivo = true;
-    document.getElementById('play-pause').innerHTML = '<i class="fas fa-pause"></i>';
+    if (!cronometroRodando) {
+        intervalo = setInterval(() => {
+            tempo++;
+            document.getElementById('tempo').innerText = formatarTempo(tempo);
+        }, 1000);
+        cronometroRodando = true;
+        document.getElementById('iniciar').style.display = 'none'; // Esconde Play
+        document.getElementById('pausar').style.display = 'inline'; // Mostra Pause
+    }
 }
 
 function pausarCronometro() {
-    clearInterval(cronometroInterval);
-    cronometroAtivo = false;
-    document.getElementById('play-pause').innerHTML = '<i class="fas fa-play"></i>';
+    clearInterval(intervalo);
+    cronometroRodando = false;
+    document.getElementById('iniciar').style.display = 'inline'; // Mostra Play
+    document.getElementById('pausar').style.display = 'none'; // Esconde Pause
 }
 
 function reiniciarCronometro() {
-    clearInterval(cronometroInterval);
-    cronometroTempo = 0;
-    cronometroAtivo = false;
+    clearInterval(intervalo);
+    tempo = 0;
     document.getElementById('tempo').innerText = '00:00:00';
-    document.getElementById('play-pause').innerHTML = '<i class="fas fa-play"></i>';
+    cronometroRodando = false;
+    document.getElementById('iniciar').style.display = 'inline'; // Mostra Play
+    document.getElementById('pausar').style.display = 'none'; // Esconde Pause
 }
 
-// Funções do Temporizador
-document.getElementById('temporizador-play-pause').addEventListener('click', () => {
-    if (!temporizadorAtivo) {
-        iniciarTemporizador();
-    } else {
-        pausarTemporizador();
-    }
+// Temporizador
+let temporizador = document.getElementById('temporizador-tempo');
+document.querySelectorAll('.tempo-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        const segundos = parseInt(btn.getAttribute('data-segundos'));
+        incrementarTemporizador(segundos);
+    });
 });
-document.getElementById('temporizador-reset').addEventListener('click', reiniciarTemporizador);
+
+function incrementarTemporizador(segundos) {
+    temporizadorTempo += segundos; // Incrementa o tempo
+    temporizador.innerText = formatarTempo(temporizadorTempo); // Atualiza o display
+}
+
+// Botão Iniciar do Temporizador
+document.getElementById('iniciar-temporizador').addEventListener('click', iniciarTemporizador);
+document.getElementById('pausar-temporizador').addEventListener('click', pausarTemporizador);
 
 function iniciarTemporizador() {
-    temporizadorTempo = parseInt(document.getElementById('temporizador-input').value);
-    if (isNaN(temporizadorTempo) || temporizadorTempo <= 0) {
-        document.getElementById('temporizador-tempo').innerText = 'Insira um valor válido!';
-        return;
+    if (temporizadorTempo > 0) {
+        temporizadorInterval = setInterval(() => {
+            temporizadorTempo--;
+            temporizador.innerText = formatarTempo(temporizadorTempo);
+            if (temporizadorTempo <= 0) {
+                clearInterval(temporizadorInterval);
+                temporizador.innerText = 'Tempo esgotado!';
+            }
+        }, 1000);
     }
-    temporizadorInterval = setInterval(() => {
-        temporizadorTempo--;
-        document.getElementById('temporizador-tempo').innerText = formatarTempo(temporizadorTempo);
-        if (temporizadorTempo <= 0) {
-            clearInterval(temporizadorInterval);
-            document.getElementById('temporizador-tempo').innerText = 'Tempo esgotado!';
-            temporizadorAtivo = false;
-            document.getElementById('temporizador-play-pause').innerHTML = '<i class="fas fa-play"></i>';
-        }
-    }, 1000);
-    temporizadorAtivo = true;
-    document.getElementById('temporizador-play-pause').innerHTML = '<i class="fas fa-pause"></i>';
 }
 
 function pausarTemporizador() {
     clearInterval(temporizadorInterval);
-    temporizadorAtivo = false;
-    document.getElementById('temporizador-play-pause').innerHTML = '<i class="fas fa-play"></i>';
 }
 
-function reiniciarTemporizador() {
-    clearInterval(temporizadorInterval);
-    temporizadorTempo = 0;
-    temporizadorAtivo = false;
-    document.getElementById('temporizador-tempo').innerText = '00:00:00';
-    document.getElementById('temporizador-play-pause').innerHTML = '<i class="fas fa-play"></i>';
-}
+// Mostrar e ocultar seções
+document.getElementById('calendario-btn').addEventListener('click', mostrarCalendario);
+document.getElementById('cronometro-btn').addEventListener('click', mostrarCronometro);
+document.getElementById('temporizador-btn').addEventListener('click', mostrarTemporizador);
 
-// Funções de Navegação
-document.getElementById('cronometro-btn').addEventListener('click', () => {
-    mostrarAba('cronometro');
-});
-document.getElementById('temporizador-btn').addEventListener('click', () => {
-    mostrarAba('temporizador');
-});
-document.getElementById('calendario-btn').addEventListener('click', () => {
-    mostrarAba('calendario');
-});
-
-function mostrarAba(aba) {
-    document.querySelector('.cronometro').style.display = 'none';
+function mostrarCronometro() {
+    document.querySelector('.cronometro').style.display = 'block';
     document.querySelector('.temporizador').style.display = 'none';
     document.querySelector('.calendario').style.display = 'none';
-    document.querySelector(`.${aba}`).style.display = 'block';
+    document.querySelector('.botao-temporizador').style.display = 'none'; // Esconde botões do temporizador
 }
 
-// Funções Auxiliares
+function mostrarTemporizador() {
+    document.querySelector('.cronometro').style.display = 'none';
+    document.querySelector('.temporizador').style.display = 'block';
+    document.querySelector('.calendario').style.display = 'none';
+    document.querySelector('.botao-temporizador').style.display = 'flex'; // Mostra botões do temporizador
+}
+
+function mostrarCalendario() {
+    document.querySelector('.cronometro').style.display = 'none';
+    document.querySelector('.temporizador').style.display = 'none';
+    document.querySelector('.calendario').style.display = 'block';
+    document.querySelector('.botao-temporizador').style.display = 'none'; // Esconde botões do temporizador
+}
+
 function formatarTempo(segundos) {
-    const h = Math.floor(segundos / 3600);
-    const m = Math.floor((segundos % 3600) / 60);
-    const s = segundos % 60;
-    return `${zerar(h)}:${zerar(m)}:${zerar(s)}`;
-}
-
-function zerar(num) {
-    return num < 10 ? '0' + num : num;
+    const horas = String(Math.floor(segundos / 3600)).padStart(2, '0');
+    const minutos = String(Math.floor((segundos % 3600) / 60)).padStart(2, '0');
+    const seg = String(segundos % 60).padStart(2, '0');
+    return `${horas}:${minutos}:${seg}`;
 }
