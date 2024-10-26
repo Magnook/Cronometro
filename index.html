@@ -1,20 +1,48 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cronômetro</title>
+    <title>Cronômetro, Temporizador e Calendário</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome atualizado -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
-<body>
-    <div class="cronometro">
-        <h1 id="tempo">00:00:00</h1>
-        <button id="iniciar">Iniciar</button>
-        <button id="pausar">Pausar</button>
-        <button id="reiniciar">Reiniciar</button>
-    </div>
 
+<body>
+    <div class="container">
+        <!-- Navegação -->
+        <div class="nav">
+            <button id="cronometro-btn" class="nav-btn active"><i class="fas fa-stopwatch"></i></button>
+            <button id="temporizador-btn" class="nav-btn"><i class="fas fa-hourglass-half"></i></button>
+            <button id="calendario-btn" class="nav-btn"><i class="fas fa-calendar-alt"></i></button>
+        </div>
+
+        <!-- Conteúdo -->
+        <div class="content">
+            <!-- Cronômetro -->
+            <div class="cronometro">
+                <h1 id="tempo">00:00:00</h1>
+                <button id="play-pause"><i class="fas fa-play"></i></button>
+                <button id="reset"><i class="fas fa-redo"></i></button>
+            </div>
+            
+            <!-- Temporizador -->
+            <div class="temporizador" style="display: none;">
+                <input id="temporizador-input" type="number" placeholder="Tempo em segundos">
+                <button id="temporizador-play-pause"><i class="fas fa-play"></i></button>
+                <button id="temporizador-reset"><i class="fas fa-redo"></i></button>
+                <h1 id="temporizador-tempo">00:00:00</h1>
+            </div>
+            
+            <!-- Calendário -->
+            <div class="calendario" style="display: none;">
+                <input id="calendario-input" type="date" value="2023-10-26">
+            </div>
+        </div>
+    </div>
     <script src="script.js"></script>
 </body>
+
 </html>
